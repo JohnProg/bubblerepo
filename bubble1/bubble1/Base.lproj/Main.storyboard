@@ -28,6 +28,9 @@
                                     <constraint firstAttribute="height" constant="40" id="Qv9-QX-YZ0"/>
                                 </constraints>
                                 <state key="normal" title="Login to facebook"/>
+                                <connections>
+                                    <action selector="loginClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hLZ-gn-24c"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -37,6 +40,9 @@
                             <constraint firstAttribute="bottom" secondItem="U6h-Vm-Pfo" secondAttribute="bottom" constant="2" id="oCK-Lw-1rw"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="facebookButton" destination="U6h-Vm-Pfo" id="ZYp-JN-QnR"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
