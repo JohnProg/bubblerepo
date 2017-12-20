@@ -38,6 +38,12 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         super.viewDidLoad()
     }
     
+    /** Giri.
+     This method is called whenever the view appears. Read more here:
+     https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/WorkWithViewControllers.html
+     
+     Basically, if this is the first time the view is appearing, we have to construct the UI elements (like the buttons, the
+     */
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -58,27 +64,27 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             view.addSubview(self.scheduleRideButton!)
             
             // make uitoolbar instance
-            myToolbar = UIToolbar(frame: CGRect(x: 0, y: self.view.bounds.size.height - 44, width: self.view.bounds.size.width, height: 40.0))
-            
-            // set the position of the toolbar
-            myToolbar!.layer.position = CGPoint(x: self.view.bounds.width/2, y: self.view.bounds.height-20.0)
-            
-            // set the color of the toolbar
-            myToolbar!.barStyle = .blackTranslucent
-            myToolbar!.tintColor = UIColor.white
-            myToolbar!.backgroundColor = UIColor.black
-            
-            // make a button
-            let myUIBarButtonGreen: UIBarButtonItem = UIBarButtonItem(title: "instant ride", style:.plain, target: self, action: #selector(onClickBarButton))
-            myUIBarButtonGreen.tag = 1
-            myUIBarButtonGreen.width = myToolbar!.frame.width / 2.0
-            
-            let myUIBarButtonBlue: UIBarButtonItem = UIBarButtonItem(title: "schedule ride", style:.plain, target: self, action: #selector(onClickBarButton))
-            myUIBarButtonBlue.tag = 2
-            myUIBarButtonBlue.width = myToolbar!.frame.width / 2.0
-            
-            // add the buttons on the toolbar
-            myToolbar!.items = [myUIBarButtonGreen, myUIBarButtonBlue]
+//            myToolbar = UIToolbar(frame: CGRect(x: 0, y: self.view.bounds.size.height - 44, width: self.view.bounds.size.width, height: 40.0))
+//
+//            // set the position of the toolbar
+//            myToolbar!.layer.position = CGPoint(x: self.view.bounds.width/2, y: self.view.bounds.height-20.0)
+//
+//            // set the color of the toolbar
+//            myToolbar!.barStyle = .blackTranslucent
+//            myToolbar!.tintColor = UIColor.white
+//            myToolbar!.backgroundColor = UIColor.black
+//
+//            // make a button
+//            let myUIBarButtonGreen: UIBarButtonItem = UIBarButtonItem(title: "instant ride", style:.plain, target: self, action: #selector(onClickBarButton))
+//            myUIBarButtonGreen.tag = 1
+//            myUIBarButtonGreen.width = myToolbar!.frame.width / 2.0
+//
+//            let myUIBarButtonBlue: UIBarButtonItem = UIBarButtonItem(title: "schedule ride", style:.plain, target: self, action: #selector(onClickBarButton))
+//            myUIBarButtonBlue.tag = 2
+//            myUIBarButtonBlue.width = myToolbar!.frame.width / 2.0
+//
+//            // add the buttons on the toolbar
+//            myToolbar!.items = [myUIBarButtonGreen, myUIBarButtonBlue]
             
             // add the toolbar to the view.
             //self.view.addSubview(myToolbar!)
@@ -109,6 +115,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         
     }
     
+    /** Giri
+     This method puts the markers on the map. If both "from" and "to" places are non null, then the camera is adjusted such that both places show up on the map.
+     */
     func showPlacesOnMap() {
         if(self.fromPlace != nil) {
             self.fromTextField?.text = self.fromPlace?.name
@@ -153,6 +162,10 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         }
     }
     
+    /** Giri.
+     loadView is used to create a view manually. Since Google map views have to be inserted manually, I am using this method.
+     https://developer.apple.com/documentation/uikit/uiviewcontroller/1621454-loadview
+     */
     override func loadView() {
         super.loadView()
         
@@ -171,13 +184,16 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         view = mapView
         
         // Creates a marker in the center of the map.
-        let marker = GMSMarker()
-        marker.position = CLLocationCoordinate2D(latitude: self.lat, longitude: self.long)
-        marker.title = "Sydney"
-        marker.snippet = "Australia"
-        marker.map = mapView
+//        let marker = GMSMarker()
+//        marker.position = CLLocationCoordinate2D(latitude: self.lat, longitude: self.long)
+//        marker.title = "Sydney"
+//        marker.snippet = "Australia"
+//        marker.map = mapView
     }
     
+    /** Giri.
+     Ignore this method. Its just a place holder for now. Monkeying around ashte.
+     */
     func buttonClicked(sender: UIButton) {
         NSLog("clicked")
         let cameraUpdate = GMSCameraUpdate.scrollBy(x: 5.0, y: 10.0)
@@ -228,7 +244,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         present(autocompleteController, animated: true, completion: nil)
     }
 
-    // Handle the user's selection.
+    /** Giri
+     This method handles the user's selection.
+     */
     func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
         print("Place name: \(place.name)")
         print("Place address: \(String(describing: place.formattedAddress))")
@@ -256,6 +274,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         
     }
     
+    /** Giri
+     Get the path, given a source and destination. Each line (polyline) is put on the map.
+     */
     func fetchPath(source: GMSPlace, destination: GMSPlace) {
         let originLat = source.coordinate.latitude
         let originLong = source.coordinate.longitude

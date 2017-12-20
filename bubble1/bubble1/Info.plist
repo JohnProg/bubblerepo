@@ -59,5 +59,19 @@
         <string>googlechromes</string>
         <string>comgooglemaps</string>
 	</array>
+    
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>None</string>
+            <key>CFBundleURLName</key>
+            <string>auth0</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(YOUR_BUNDLE_IDENTIFIER)</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

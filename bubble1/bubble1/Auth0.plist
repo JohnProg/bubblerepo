@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+   Auth0.plist
+   bubble1
+
+   Created by Sumanth on 12/14/17.
+   Copyright (c) 2017 sumanths. All rights reserved.
+-->
+<plist version="1.0">
+    <dict>
+        <key>ClientId</key>
+        <string>8q247lB5uWUCsjakyolWSvbs7mZSQJlM</string>
+        <key>Domain</key>
+        <string>baybubble.auth0.com</string>
+    </dict>
+</plist>

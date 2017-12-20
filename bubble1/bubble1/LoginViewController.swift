@@ -32,6 +32,8 @@ class LoginViewController: UIViewController {
     @IBAction func loginClicked(_ sender: Any) {
         (UIApplication.shared.delegate as! AppDelegate).switchToHomeScreen()
         
+//        (UIApplication.shared.delegate as! AppDelegate).showAuth0Screen()
+        
         // navigation has to be done in the app delegate
         
         

@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import GoogleMaps
 import GooglePlaces
+import Auth0
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,7 +28,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        return Auth0.resumeAuth(url, options: options)
+    }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -58,5 +61,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.rootViewController = vc
     }
 
+    func showAuth0Screen() {
+        DispatchQueue.main.async {
+            Auth0
+                .webAuth()
+                .scope("openid profile")
+                .audience("http://baybubble.auth0.com/userinfo")
+                .start { result in
+                    switch result {
+                    case .success(let credentials):
+                        print("Obtained credentials: \(credentials)")
+                    case .failure(let error):
+                        print("Failed with \(error)")
+                    }
+            }
+        }
+        
+    }
 }
 

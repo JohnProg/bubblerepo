@@ -15,6 +15,7 @@
 		47F4BB101F19FFA600F86B38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB0E1F19FFA600F86B38 /* Main.storyboard */; };
 		47F4BB121F19FFA600F86B38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB111F19FFA600F86B38 /* Assets.xcassets */; };
 		47F4BB151F19FFA600F86B38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB131F19FFA600F86B38 /* LaunchScreen.storyboard */; };
+		47F95BD81FE266BF00D968F8 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47F95BD71FE266BF00D968F8 /* Auth0.plist */; };
 		611D17FB90E8E54BBB32C88E /* Pods_bubble1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E80E6807EB377461E2CD6144 /* Pods_bubble1.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		47F4BB111F19FFA600F86B38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47F4BB141F19FFA600F86B38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		47F4BB161F19FFA600F86B38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		47F95BD71FE266BF00D968F8 /* Auth0.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Auth0.plist; sourceTree = "<group>"; };
 		8BA1383C8CC84FDA5C2A4DEC /* Pods-bubble1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bubble1.release.xcconfig"; path = "Pods/Target Support Files/Pods-bubble1/Pods-bubble1.release.xcconfig"; sourceTree = "<group>"; };
 		9A13CB517663D23A428E4EA2 /* Pods-bubble1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bubble1.debug.xcconfig"; path = "Pods/Target Support Files/Pods-bubble1/Pods-bubble1.debug.xcconfig"; sourceTree = "<group>"; };
 		E80E6807EB377461E2CD6144 /* Pods_bubble1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_bubble1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +75,7 @@
 				47F4BB111F19FFA600F86B38 /* Assets.xcassets */,
 				47F4BB131F19FFA600F86B38 /* LaunchScreen.storyboard */,
 				47F4BB161F19FFA600F86B38 /* Info.plist */,
+				47F95BD71FE266BF00D968F8 /* Auth0.plist */,
 			);
 			path = bubble1;
 			sourceTree = "<group>";
@@ -168,6 +171,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47F95BD81FE266BF00D968F8 /* Auth0.plist in Resources */,
 				47F4BB151F19FFA600F86B38 /* LaunchScreen.storyboard in Resources */,
 				47F4BB121F19FFA600F86B38 /* Assets.xcassets in Resources */,
 				47F4BB101F19FFA600F86B38 /* Main.storyboard in Resources */,
