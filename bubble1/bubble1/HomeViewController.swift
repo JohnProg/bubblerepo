@@ -13,7 +13,8 @@ import GooglePlaces
 import Alamofire
 import SwiftyJSON
 
-class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate, GMSMapViewDelegate {
+class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate, GMSMapViewDelegate, ScheduleRideViewControllerDelegate {
+    
     var lat = 37.80
     var long = -122.21
     
@@ -36,6 +37,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Test code
+//        WebUtil.initUser(userId: "pmalavalli@gmail.com", callback: { response, error in
+//            print("callback")
+//            print(response)
+//        })
     }
     
     /** Giri.
@@ -58,7 +64,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             
             let frame2 = CGRect(x: Int(viewWidth/2 + 20), y: Int(viewHeight - 60), width: Int((viewWidth - 80)/2), height: 40)
             self.scheduleRideButton = self.createButton(rect: frame2, text: "Schedule ride", color: UIColor.black)
-            self.scheduleRideButton?.addTarget(self, action: #selector(buttonClicked(sender:)), for: UIControlEvents.touchUpInside)
+            self.scheduleRideButton?.addTarget(self, action: #selector(scheduleRide(sender:)), for: UIControlEvents.touchUpInside)
             
             view.addSubview(self.instantRideButton!)
             view.addSubview(self.scheduleRideButton!)
@@ -202,6 +208,28 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         map?.animate(with: cameraUpdate)
     }
     
+    func scheduleRide(sender: UIButton) {
+        print("Schedule ride")
+        
+        if(self.fromPlace == nil || self.toPlace == nil) {
+            let alert = UIAlertController(title: "Error scheduling a ride", message: "Please specify both the source and destination locations", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                print("ok clicked")
+            }))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+
+        // Update model
+        let model = BubbleModel.shared()
+        model.tripToBeScheduled = TripDetails(src: self.fromPlace!, dest: self.toPlace!)
+    
+        let storyboard = UIStoryboard(name: "ScheduleRideModal", bundle: nil)
+        let controller:ScheduleRideViewController = storyboard.instantiateViewController(withIdentifier: "ScheduleRideVC_ID") as! ScheduleRideViewController
+        controller.delegate = self
+        present(controller, animated: true, completion: nil)
+    }
+    
     func createButton(rect: CGRect, text: String, color: UIColor) -> UIButton {
         let button = UIButton(frame: rect)
         button.backgroundColor = color
@@ -336,6 +364,14 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     // MaviewDelegate functions
     func mapView(_ mapView: GMSMapView, didTap overlay: GMSOverlay) {
         print("In tap handler")
+    }
+    
+    func rideScheduled(date: Date) {
+        // Update model
+        let model = BubbleModel.shared()
+        model.tripToBeScheduled?.date = date
+        
+        // Make API call
     }
 
 }

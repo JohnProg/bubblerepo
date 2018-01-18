@@ -13,4 +13,9 @@ pod 'GooglePlaces'
 pod 'Alamofire', '~> 4.5'
 pod 'SwiftyJSON'
 pod 'Auth0'
+pod 'OneSignal', '>= 2.5.2', '< 3.0'
+end
+
+target 'OneSignalNotificationServiceExtension' do
+    pod 'OneSignal', '>= 2.5.2', '< 3.0'
 end
