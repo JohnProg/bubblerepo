@@ -30,6 +30,7 @@ class WebUtil {
         }
     }
     
+    // Not integrated.
     public static func requestRide(userId: String, startLocation: GMSPlace, endLocation: GMSPlace, date: Date, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
         let srcName = startLocation.name
         let destName = endLocation.name

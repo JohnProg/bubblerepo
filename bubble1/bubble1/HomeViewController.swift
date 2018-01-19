@@ -371,7 +371,13 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         let model = BubbleModel.shared()
         model.tripToBeScheduled?.date = date
         
+        let trip = model.tripToBeScheduled!
+        
         // Make API call
+        WebUtil.requestRide(userId: model.userId, startLocation: trip.source!, endLocation: trip.destination!, date: trip.date!, callback: { response, error in
+            // If success, display a message that the request is being processed.
+            
+        })
     }
 
 }
