@@ -12,6 +12,7 @@ import GoogleMaps
 import GooglePlaces
 import Auth0
 import OneSignal
+import SwiftyJSON
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let notificationReceivedBlock: OSHandleNotificationReceivedBlock = { notification in
             
             print("Received Notification: \(notification!.payload.notificationID)")
+            NotificationHandler.shared().handle(notification!)
         }
         
         let notificationOpenedBlock: OSHandleNotificationActionBlock = { result in
@@ -52,7 +54,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        // Replace 'YOUR_APP_ID' with your OneSignal App ID.
         OneSignal.initWithLaunchOptions(launchOptions,
                                         appId: Constants.Keys.OneSignal_APPID,
                                         handleNotificationReceived: notificationReceivedBlock,
@@ -65,7 +66,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //   how your app will use them.
         OneSignal.promptForPushNotifications(userResponse: { accepted in
             print("User accepted notifications: \(accepted)")
-            OneSignal.sendTag("UserType", value: "Driver")
+            OneSignal.sendTag("UserType", value: "User")
+            OneSignal.sendTag("email", value: "gmalavali@yahoo.com")
         })
 
         // Sync hashed email if you have a login system or collect it.

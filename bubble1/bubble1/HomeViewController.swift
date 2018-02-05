@@ -12,8 +12,10 @@ import GoogleMaps
 import GooglePlaces
 import Alamofire
 import SwiftyJSON
+import SendBirdSDK
 
-class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate, GMSMapViewDelegate, ScheduleRideViewControllerDelegate {
+class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate,
+            GMSMapViewDelegate, ScheduleRideViewControllerDelegate, NotificationDelegate, SBDChannelDelegate {
     
     var lat = 37.80
     var long = -122.21
@@ -34,6 +36,8 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     var isPlaceFrom: Bool?
     var polyline: GMSPolyline?
     
+    var driverMarker: GMSMarker?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +46,19 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
 //            print("callback")
 //            print(response)
 //        })
+        
+        // Hardcoding userId for now.. needs to change
+        BubbleModel.shared().userId = "gmalavali@yahoo.com"
+        let userId = BubbleModel.shared().userId
+        
+        SBDMain.initWithApplicationId(Constants.Keys.SendBird_APPID)
+        SBDMain.connect(withUserId: userId, completionHandler: { (user, error) in
+            // ...
+            print("Connect of SB")
+            if error != nil {
+                print(error!.localizedDescription)
+            }
+        })
     }
     
     /** Giri.
@@ -118,6 +135,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         } else {
             self.showPlacesOnMap()
         }
+        
+        // Subscribe to notifications
+        NotificationHandler.shared().setDelegate(self)
         
     }
     
@@ -376,9 +396,63 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         // Make API call
         WebUtil.requestRide(userId: model.userId, startLocation: trip.source!, endLocation: trip.destination!, date: trip.date!, callback: { response, error in
             // If success, display a message that the request is being processed.
-            
+            print(response)
+            if error != "" {
+                print("error: " + error)
+            }
         })
     }
 
+    func rideAccepted(data: JSON) {
+        // Alert user
+        let alert = UIAlertController(title: "Ride accepted", message: "Your ride has been accepted", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            print("ok clicked")
+        }))
+        self.present(alert, animated: true, completion: nil)
+        // Get channel url and enter the channel.
+        let mHandler = MessagingHandler.shared()
+        let channelUrl = data["Channel"].stringValue
+        mHandler.enterChannel(channelUrl)
+        
+        // Add delegate to the channel
+        let tripId = data["TripID"].stringValue
+        SBDMain.add(self as SBDChannelDelegate, identifier: tripId)
+        
+        // Make this trip the active trip
+        let model = BubbleModel.shared()
+        model.activeTrip = model.tripToBeScheduled
+        model.activeTrip?.id = tripId
+        model.activeTrip?.driverEmail = data["DriverEmailID"].stringValue
+    }
+    
+    func channel(_ sender: SBDBaseChannel, didReceive message: SBDBaseMessage) {
+        // Received a chat message
+        print(message)
+        let msg = message as! SBDUserMessage
+        print(msg)
+        print(msg.message)
+        let msgArr = msg.message?.components(separatedBy: ",")
+        if msgArr?.count == 2 {
+            let lat = msgArr![0]
+            let lng = msgArr![1]
+            let model = BubbleModel.shared()
+            model.activeTrip?.currentLat = Double(lat)
+            model.activeTrip?.currentLng = Double(lng)
+            updateDriverLocation()
+        }
+    }
+    
+    func updateDriverLocation() {
+        let model = BubbleModel.shared()
+        if(self.driverMarker == nil) {
+            self.driverMarker = GMSMarker()
+        }
+        self.driverMarker?.position = CLLocationCoordinate2D(latitude: (model.activeTrip?.currentLat)!, longitude: (model.activeTrip?.currentLng)!)
+        self.driverMarker?.title = "Your ride"
+        self.driverMarker?.snippet = BubbleModel.shared().activeTrip?.driverEmail
+        self.driverMarker?.icon = GMSMarker.markerImage(with: UIColor(red:127, green: 255, blue: 0, alpha: 1))
+        self.driverMarker?.map = self.view as? GMSMapView
+    }
 }
 

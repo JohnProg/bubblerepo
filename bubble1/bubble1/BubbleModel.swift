@@ -23,6 +23,8 @@ class BubbleModel {
     
     var userId: String = ""
     var tripToBeScheduled: TripDetails?
+    var hasTripStarted: Bool = false
+    var activeTrip: TripDetails?
 }
 
 class TripDetails {
@@ -43,6 +45,9 @@ class TripDetails {
     var destination: GMSPlace?
     var id: String = ""
     var date: Date?
+    var driverEmail: String?
+    var currentLat: Double?
+    var currentLng: Double?
     
     var distance: Double = 0.0
     var price: Double = 0.0

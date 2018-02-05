@@ -37,18 +37,42 @@ class WebUtil {
         let srcPlaceId = startLocation.placeID
         let destPlaceId = endLocation.placeID
         
-        let url = "http://ec2-34-216-193-121.us-west-2.compute.amazonaws.com:443/inituser?EmailID=" + userId
-        Alamofire.request(url, method: .post).responseJSON { response in
-            print(response.request!)  // original URL request
-            print(response.response!) // HTTP URL response
-            print(response.data!)     // server data
-            print(response.result)   // result of response serialization
-            
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let min = calendar.component(.minute, from: date)
+        let year = calendar.component(.year, from: date)
+        let month = calendar.component(.month, from: date)
+        let day = calendar.component(.day, from: date)
+        
+        let startLat = startLocation.coordinate.latitude
+        let startLng = startLocation.coordinate.longitude
+        let destLat = endLocation.coordinate.latitude
+        let destLng = endLocation.coordinate.longitude
+        
+        let url = Constants.API_Server.Base + "/requestTrip?" +
+            "StartLocation=" + srcName + "&DropLocation=" + destName +
+            "&StartTime=" + String(hour) + ":" + String(min) +
+            "&StartDate=" + String(month) + "-" + String(day) + "-" + String(year) +
+            "&ChildEmailID=" + userId +
+            "&MapLink=maplink" +
+            "&StartLatLng=" + String(startLat) + "," + String(startLng) +
+            "&DropLatLng=" + String(destLat) + "," + String(destLng) +
+            "&StartPlaceID=" + srcPlaceId + "&DropPlaceID=" + destPlaceId
+
+        let escapedUrl = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        print(escapedUrl!)
+        Alamofire.request(escapedUrl!, method: .post).responseJSON { response in
             if(response.result.isSuccess) {
+                print(response.request!)  // original URL request
+                print(response.response!) // HTTP URL response
+                print(response.data!)     // server data
+                print(response.result)   // result of response serialization
+                
                 let json = JSON(data: response.data!)
                 callback(json, "")
             } else {
-                callback(JSON(""), "error")
+                let err = response.result.error
+                callback(JSON(""), (err?.localizedDescription)!)
             }
             
         }
