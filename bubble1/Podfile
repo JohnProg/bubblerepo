@@ -11,12 +11,13 @@ pod 'FacebookLogin'
 pod 'GoogleMaps'
 pod 'GooglePlaces'
 pod 'Alamofire', '~> 4.5'
-pod 'SwiftyJSON'
+pod 'SwiftyJSON', '3.1.4'
 pod 'Auth0'
 pod 'OneSignal', '>= 2.5.2', '< 3.0'
 pod 'SendBirdSDK'
 end
 
 target 'OneSignalNotificationServiceExtension' do
+    use_frameworks!
     pod 'OneSignal', '>= 2.5.2', '< 3.0'
 end
