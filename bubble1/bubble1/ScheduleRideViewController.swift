@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 protocol ScheduleRideViewControllerDelegate: class {
-    func rideScheduled(date: Date)
+    func scheduleRide(date: Date)
 }
 
 class ScheduleRideViewController: UIViewController {
@@ -26,7 +26,7 @@ class ScheduleRideViewController: UIViewController {
         dateFormatter.timeStyle = .short
         print(dateFormatter.string(from: self.datePicker.date))
         
-        self.delegate?.rideScheduled(date: self.datePicker.date)
+        self.delegate?.scheduleRide(date: self.datePicker.date)
         self.dismiss(animated: true, completion: nil)
     }
     

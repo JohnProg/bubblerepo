@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		471D1CBA202DD1A200A1E163 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 471D1CB9202DD1A100A1E163 /* Splash.storyboard */; };
+		471D1CBD202DD27500A1E163 /* BubbleSplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471D1CBB202DD27400A1E163 /* BubbleSplashScreen.swift */; };
+		471D1CBE202DD27500A1E163 /* BubbleLoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471D1CBC202DD27400A1E163 /* BubbleLoginScreen.swift */; };
 		4747F8521FEB896200CF76F8 /* DummyStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4747F8511FEB896200CF76F8 /* DummyStoryboard.storyboard */; };
 		474E25F51F1B86E300241EE6 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 474E25F41F1B86E300241EE6 /* Home.storyboard */; };
 		474E25F71F1B8B1C00241EE6 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E25F61F1B8B1C00241EE6 /* HomeViewController.swift */; };
 		474E25F91F1D229200241EE6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474E25F81F1D229200241EE6 /* Constants.swift */; };
 		4760E92F200201AE0007AF16 /* WebUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4760E92E200201AE0007AF16 /* WebUtil.swift */; };
 		4760E931200250600007AF16 /* BubbleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4760E930200250600007AF16 /* BubbleModel.swift */; };
+		47A6B61D2029727C006547EE /* Menu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47A6B61C2029727C006547EE /* Menu.storyboard */; };
 		47B460F4202428B900F54AC2 /* NotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B460F3202428B900F54AC2 /* NotificationHandler.swift */; };
 		47B460F62024878700F54AC2 /* MessagingHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47B460F52024878700F54AC2 /* MessagingHandler.swift */; };
 		47BE97A3200A1C70001A9DD8 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE97A2200A1C70001A9DD8 /* NotificationService.swift */; };
@@ -55,12 +59,16 @@
 
 /* Begin PBXFileReference section */
 		30B3C96CC68107A00C5FAD26 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		471D1CB9202DD1A100A1E163 /* Splash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
+		471D1CBB202DD27400A1E163 /* BubbleSplashScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleSplashScreen.swift; sourceTree = "<group>"; };
+		471D1CBC202DD27400A1E163 /* BubbleLoginScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BubbleLoginScreen.swift; sourceTree = "<group>"; };
 		4747F8511FEB896200CF76F8 /* DummyStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DummyStoryboard.storyboard; sourceTree = "<group>"; };
 		474E25F41F1B86E300241EE6 /* Home.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
 		474E25F61F1B8B1C00241EE6 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		474E25F81F1D229200241EE6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		4760E92E200201AE0007AF16 /* WebUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebUtil.swift; sourceTree = "<group>"; };
 		4760E930200250600007AF16 /* BubbleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleModel.swift; sourceTree = "<group>"; };
+		47A6B61C2029727C006547EE /* Menu.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Menu.storyboard; sourceTree = "<group>"; };
 		47B460F3202428B900F54AC2 /* NotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHandler.swift; sourceTree = "<group>"; };
 		47B460F52024878700F54AC2 /* MessagingHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingHandler.swift; sourceTree = "<group>"; };
 		47BE979B2009FE83001A9DD8 /* bubble1.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = bubble1.entitlements; sourceTree = "<group>"; };
@@ -171,13 +179,17 @@
 		47F4BB1C1F1A08CB00F86B38 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				471D1CBC202DD27400A1E163 /* BubbleLoginScreen.swift */,
+				471D1CBB202DD27400A1E163 /* BubbleSplashScreen.swift */,
 				47F4BB0C1F19FFA600F86B38 /* LoginViewController.swift */,
+				471D1CB9202DD1A100A1E163 /* Splash.storyboard */,
 				47F4BB0E1F19FFA600F86B38 /* Main.storyboard */,
 				474E25F41F1B86E300241EE6 /* Home.storyboard */,
 				474E25F61F1B8B1C00241EE6 /* HomeViewController.swift */,
 				4747F8511FEB896200CF76F8 /* DummyStoryboard.storyboard */,
 				47EF99B1200E123A00886FFE /* ScheduleRideModal.storyboard */,
 				47EF99B3200E149000886FFE /* ScheduleRideViewController.swift */,
+				47A6B61C2029727C006547EE /* Menu.storyboard */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -310,6 +322,8 @@
 				47F95BD81FE266BF00D968F8 /* Auth0.plist in Resources */,
 				47EF99B2200E123A00886FFE /* ScheduleRideModal.storyboard in Resources */,
 				47F4BB151F19FFA600F86B38 /* LaunchScreen.storyboard in Resources */,
+				471D1CBA202DD1A200A1E163 /* Splash.storyboard in Resources */,
+				47A6B61D2029727C006547EE /* Menu.storyboard in Resources */,
 				47F4BB121F19FFA600F86B38 /* Assets.xcassets in Resources */,
 				47F4BB101F19FFA600F86B38 /* Main.storyboard in Resources */,
 				4747F8521FEB896200CF76F8 /* DummyStoryboard.storyboard in Resources */,
@@ -335,7 +349,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		3226FF5797B0D4522929CE48 /* [CP] Copy Pods Resources */ = {
@@ -407,7 +421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D86FD876FDF4E222DA88B7C2 /* [CP] Copy Pods Resources */ = {
@@ -442,8 +456,10 @@
 			files = (
 				4760E92F200201AE0007AF16 /* WebUtil.swift in Sources */,
 				47B460F62024878700F54AC2 /* MessagingHandler.swift in Sources */,
+				471D1CBE202DD27500A1E163 /* BubbleLoginScreen.swift in Sources */,
 				47B460F4202428B900F54AC2 /* NotificationHandler.swift in Sources */,
 				47F4BB0D1F19FFA600F86B38 /* LoginViewController.swift in Sources */,
+				471D1CBD202DD27500A1E163 /* BubbleSplashScreen.swift in Sources */,
 				47F4BB0B1F19FFA600F86B38 /* AppDelegate.swift in Sources */,
 				474E25F71F1B8B1C00241EE6 /* HomeViewController.swift in Sources */,
 				474E25F91F1D229200241EE6 /* Constants.swift in Sources */,

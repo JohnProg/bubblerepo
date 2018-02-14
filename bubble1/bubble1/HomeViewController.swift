@@ -15,7 +15,19 @@ import SwiftyJSON
 import SendBirdSDK
 
 class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate,
-            GMSMapViewDelegate, ScheduleRideViewControllerDelegate, NotificationDelegate, SBDChannelDelegate {
+            GMSMapViewDelegate, ScheduleRideViewControllerDelegate, NotificationDelegate, SBDChannelDelegate, UITableViewDelegate, UITableViewDataSource {
+    
+    @IBAction func hamburgerClicked(_ sender: UIBarButtonItem) {
+        let frame = self.view.frame
+        if self.isHamburgerMenuVisible {
+            self.view.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+            self.myTableView.removeFromSuperview()
+        } else {
+            self.view.frame = CGRect(x: CGFloat(self.menuWidth), y: 0, width: frame.width, height: frame.height)
+            self.view.addSubview(self.myTableView)
+        }
+        self.isHamburgerMenuVisible = !self.isHamburgerMenuVisible
+    }
     
     var lat = 37.80
     var long = -122.21
@@ -34,21 +46,20 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     var markerTo: GMSMarker?
     
     var isPlaceFrom: Bool?
-    var polyline: GMSPolyline?
+    var polylines: [GMSPolyline]?
     
     var driverMarker: GMSMarker?
+    
+    var isHamburgerMenuVisible: Bool = false
+    var menuArray = ["History", "Profile", "Logout"]
+    private var myTableView: UITableView!
+    
+    let menuWidth: Int = 200
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Test code
-//        WebUtil.initUser(userId: "pmalavalli@gmail.com", callback: { response, error in
-//            print("callback")
-//            print(response)
-//        })
         
-        // Hardcoding userId for now.. needs to change
-        BubbleModel.shared().userId = "gmalavali@yahoo.com"
         let userId = BubbleModel.shared().userId
         
         SBDMain.initWithApplicationId(Constants.Keys.SendBird_APPID)
@@ -59,6 +70,15 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                 print(error!.localizedDescription)
             }
         })
+        
+        // Create the tableview, but don't add it as a subview here.
+        let barHeight: CGFloat = UIApplication.shared.statusBarFrame.size.height
+        let navBarHeight = self.navigationController?.navigationBar.frame.height
+        
+        myTableView = UITableView(frame: CGRect(x: -self.menuWidth, y: Int(navBarHeight! + barHeight), width: self.menuWidth, height: 150))
+        myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
+        myTableView.dataSource = self
+        myTableView.delegate = self
     }
     
     /** Giri.
@@ -75,16 +95,18 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             let viewWidth = view.frame.size.width
             let viewHeight = view.frame.size.height
             
-            let frame1 = CGRect(x: 20, y: Int(viewHeight - 60), width: Int((viewWidth - 80)/2), height: 40)
+            let frame1 = CGRect(x: 0, y: Int(viewHeight - 50), width: Int(viewWidth), height: 50)
             self.instantRideButton = self.createButton(rect: frame1, text: "Instant ride", color: UIColor.black)
-            self.instantRideButton?.addTarget(self, action: #selector(buttonClicked(sender:)), for: UIControlEvents.touchUpInside)
+            self.instantRideButton?.setTitleColor(UIColor.white, for: .normal)
+            self.instantRideButton?.setTitleColor(UIColor.gray, for: .disabled)
+            self.instantRideButton?.addTarget(self, action: #selector(scheduleRide(sender:)), for: UIControlEvents.touchUpInside)
             
-            let frame2 = CGRect(x: Int(viewWidth/2 + 20), y: Int(viewHeight - 60), width: Int((viewWidth - 80)/2), height: 40)
-            self.scheduleRideButton = self.createButton(rect: frame2, text: "Schedule ride", color: UIColor.black)
-            self.scheduleRideButton?.addTarget(self, action: #selector(scheduleRide(sender:)), for: UIControlEvents.touchUpInside)
+//            let frame2 = CGRect(x: Int(viewWidth/2 + 20), y: Int(viewHeight - 60), width: Int((viewWidth - 80)/2), height: 40)
+//            self.scheduleRideButton = self.createButton(rect: frame2, text: "Schedule ride", color: UIColor.black)
+//            self.scheduleRideButton?.addTarget(self, action: #selector(scheduleRide(sender:)), for: UIControlEvents.touchUpInside)
             
             view.addSubview(self.instantRideButton!)
-            view.addSubview(self.scheduleRideButton!)
+//            view.addSubview(self.scheduleRideButton!)
             
             // make uitoolbar instance
 //            myToolbar = UIToolbar(frame: CGRect(x: 0, y: self.view.bounds.size.height - 44, width: self.view.bounds.size.width, height: 40.0))
@@ -343,23 +365,40 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             print(response.response) // HTTP URL response
             print(response.data)     // server data
             print(response.result)   // result of response serialization
-            
-//            self.polyline? =
+
             let json = JSON(data: response.data!)
             let routes = json["routes"].arrayValue
-            
-            for route in routes
-            {
-                let routeOverviewPolyline = route["overview_polyline"].dictionary
-                let points = routeOverviewPolyline?["points"]?.stringValue
-                let path = GMSPath.init(fromEncodedPath: points!)
-                var polyline = GMSPolyline.init(path: path)
-                polyline.strokeWidth = 4
-                polyline.isTappable = true
-                polyline.strokeColor = UIColor.blue
-                polyline.map = self.view as? GMSMapView
+            if(routes.count > 0) {
+                if(self.polylines == nil) {
+                    self.polylines = [GMSPolyline]()
+                } else {
+                    self.clearPolylines()
+                }
+                for route in routes
+                {
+                    let routeOverviewPolyline = route["overview_polyline"].dictionary
+                    let points = routeOverviewPolyline?["points"]?.stringValue
+                    let path = GMSPath.init(fromEncodedPath: points!)
+                    let polyline = GMSPolyline.init(path: path)
+                    polyline.strokeWidth = 4
+                    polyline.isTappable = true
+                    polyline.strokeColor = UIColor.blue
+                    polyline.map = self.view as? GMSMapView
+                    
+                    self.polylines?.append(polyline)
+                }
             }
         }
+    }
+    
+    func clearPolylines() {
+        if(self.polylines == nil) {
+            return
+        }
+        for pline in self.polylines! {
+            pline.map = nil
+        }
+        self.polylines?.removeAll()
     }
     
     func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
@@ -386,12 +425,14 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         print("In tap handler")
     }
     
-    func rideScheduled(date: Date) {
+    func scheduleRide(date: Date) {
         // Update model
         let model = BubbleModel.shared()
         model.tripToBeScheduled?.date = date
         
         let trip = model.tripToBeScheduled!
+        // Disable instant ride button
+        self.instantRideButton?.isEnabled = false
         
         // Make API call
         WebUtil.requestRide(userId: model.userId, startLocation: trip.source!, endLocation: trip.destination!, date: trip.date!, callback: { response, error in
@@ -399,10 +440,20 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             print(response)
             if error != "" {
                 print("error: " + error)
+                // Enable instant ride button
+                self.instantRideButton?.isEnabled = true
+                
+                // Alert user
+                let alert = UIAlertController(title: "Schedule Error", message: "Your ride could not be scheduled: " + error, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    print("ok clicked")
+                }))
+                self.present(alert, animated: true, completion: nil)
             }
         })
     }
 
+    // NotificationDelegate methods.
     func rideAccepted(data: JSON) {
         // Alert user
         let alert = UIAlertController(title: "Ride accepted", message: "Your ride has been accepted", preferredStyle: .alert)
@@ -424,8 +475,52 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         model.activeTrip = model.tripToBeScheduled
         model.activeTrip?.id = tripId
         model.activeTrip?.driverEmail = data["DriverEmailID"].stringValue
+        
+        model.tripToBeScheduled = nil
     }
     
+    func rideStarted(data: JSON) -> Void {
+        let model = BubbleModel.shared()
+        model.hasTripStarted = true
+    }
+    
+    func rideEnded(data: JSON) -> Void {
+        // Remove current trip object.
+        let model = BubbleModel.shared()
+        model.activeTrip = nil
+        model.hasTripStarted = false
+        
+        // Enable Instant ride button.
+        self.instantRideButton?.isEnabled = true
+    }
+    
+    func unableToFindDriver(data: JSON) -> Void {
+        let model = BubbleModel.shared()
+        let tripId = data["TripID"].stringValue
+        if (model.tripToBeScheduled?.id == tripId) {
+            model.tripToBeScheduled = nil
+            self.instantRideButton?.isEnabled = true
+        }
+    }
+    
+    func locationReachedAndTimedout(data: JSON) -> Void {
+        // Remove current trip object.
+        let model = BubbleModel.shared()
+        model.activeTrip = nil
+        model.hasTripStarted = false
+        
+        // Enable Instant ride button.
+        self.instantRideButton?.isEnabled = true
+        
+        // Alert user
+        let alert = UIAlertController(title: "Timeout", message: "Driver reached location, but unable to start ride. The current ride is cancelled.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            print("ok clicked")
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    // Sendbird methods
     func channel(_ sender: SBDBaseChannel, didReceive message: SBDBaseMessage) {
         // Received a chat message
         print(message)
@@ -453,6 +548,27 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         self.driverMarker?.snippet = BubbleModel.shared().activeTrip?.driverEmail
         self.driverMarker?.icon = GMSMarker.markerImage(with: UIColor(red:127, green: 255, blue: 0, alpha: 1))
         self.driverMarker?.map = self.view as? GMSMapView
+    }
+    
+    // Tableview delegate methods
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Num: \(indexPath.row)")
+        print("Value: \(self.menuArray[indexPath.row])")
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.menuArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath as IndexPath)
+        cell.textLabel!.text = "\(self.menuArray[indexPath.row])"
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+        return 50.0;
     }
 }
 

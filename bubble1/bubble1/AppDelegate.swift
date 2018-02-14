@@ -21,6 +21,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        // Set background color of NavigationBar to Black
+        UINavigationBar.appearance().barTintColor = .black
+        UINavigationBar.appearance().tintColor = .white
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        
+        print(UserDefaults.standard.bool(forKey: "IsUserLoggedIn"))
+        
         // Override point for customization after application launch.
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
@@ -52,6 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     fullMessage = fullMessage! + "\nPressed ButtonID: \(additionalData!["actionSelected"])"
                 }
             }
+            NotificationHandler.shared().handle((result?.notification)!)
         }
         
         OneSignal.initWithLaunchOptions(launchOptions,
@@ -62,17 +71,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         OneSignal.inFocusDisplayType = OSNotificationDisplayType.notification;
         
-        // Recommend moving the below line to prompt for push after informing the user about
-        //   how your app will use them.
-        OneSignal.promptForPushNotifications(userResponse: { accepted in
-            print("User accepted notifications: \(accepted)")
-            OneSignal.sendTag("UserType", value: "User")
-            OneSignal.sendTag("email", value: "gmalavali@yahoo.com")
-        })
-
-        // Sync hashed email if you have a login system or collect it.
-        //   Will be used to reach the user at the most optimal time of day.
-        // OneSignal.syncHashedEmail(userEmail)
+        if UserDefaults.standard.bool(forKey: "IsUserLoggedIn") {
+            // Set userId in the model, initialize OneSignal with the userId and navigate to the home screen.
+            let userId = UserDefaults.standard.string(forKey: "userID")!
+            BubbleModel.shared().userId = userId
+            NotificationHandler.shared().initializeOneSignalWithUserID(userId)
+            switchToHomeScreen()
+        }
         
         return true
     }
@@ -102,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
     func switchToHomeScreen() {
         
         let sb = UIStoryboard(name: "Home", bundle: nil)

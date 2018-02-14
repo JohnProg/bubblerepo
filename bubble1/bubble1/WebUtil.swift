@@ -13,20 +13,19 @@ import GooglePlaces
 
 class WebUtil {
     public static func initUser(userId: String, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
-        let url = "http://ec2-34-216-193-121.us-west-2.compute.amazonaws.com:443/inituser?EmailID=" + userId
+        let url = Constants.API_Server.Base + "/inituser?EmailID=" + userId
         Alamofire.request(url, method: .post).responseJSON { response in
             print(response.request!)  // original URL request
             print(response.response!) // HTTP URL response
             print(response.data!)     // server data
             print(response.result)   // result of response serialization
             
-            if(response.result.isSuccess) {
+            if( (response.response?.statusCode)! >= 200 && (response.response?.statusCode)! < 300) {
                 let json = JSON(data: response.data!)
                 callback(json, "")
             } else {
-                callback(JSON(""), "error")
+                callback(JSON.null, "error")
             }
-            
         }
     }
     
