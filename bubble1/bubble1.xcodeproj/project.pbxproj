@@ -28,6 +28,7 @@
 		47F4BB101F19FFA600F86B38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB0E1F19FFA600F86B38 /* Main.storyboard */; };
 		47F4BB121F19FFA600F86B38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB111F19FFA600F86B38 /* Assets.xcassets */; };
 		47F4BB151F19FFA600F86B38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47F4BB131F19FFA600F86B38 /* LaunchScreen.storyboard */; };
+		47F8A8FB203576E900016B4F /* SocketHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F8A8FA203576E900016B4F /* SocketHandler.swift */; };
 		47F95BD81FE266BF00D968F8 /* Auth0.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47F95BD71FE266BF00D968F8 /* Auth0.plist */; };
 		611D17FB90E8E54BBB32C88E /* Pods_bubble1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E80E6807EB377461E2CD6144 /* Pods_bubble1.framework */; };
 		DB06D5F8DB79A2EFD83B92F0 /* Pods_OneSignalNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67F758770CAE54A981A6D578 /* Pods_OneSignalNotificationServiceExtension.framework */; };
@@ -84,6 +85,7 @@
 		47F4BB111F19FFA600F86B38 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		47F4BB141F19FFA600F86B38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		47F4BB161F19FFA600F86B38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		47F8A8FA203576E900016B4F /* SocketHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketHandler.swift; sourceTree = "<group>"; };
 		47F95BD71FE266BF00D968F8 /* Auth0.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Auth0.plist; sourceTree = "<group>"; };
 		67F758770CAE54A981A6D578 /* Pods_OneSignalNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BA1383C8CC84FDA5C2A4DEC /* Pods-bubble1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bubble1.release.xcconfig"; path = "Pods/Target Support Files/Pods-bubble1/Pods-bubble1.release.xcconfig"; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				4760E92E200201AE0007AF16 /* WebUtil.swift */,
 				47B460F3202428B900F54AC2 /* NotificationHandler.swift */,
 				47B460F52024878700F54AC2 /* MessagingHandler.swift */,
+				47F8A8FA203576E900016B4F /* SocketHandler.swift */,
 			);
 			name = utils;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				47F4BB0B1F19FFA600F86B38 /* AppDelegate.swift in Sources */,
 				474E25F71F1B8B1C00241EE6 /* HomeViewController.swift in Sources */,
 				474E25F91F1D229200241EE6 /* Constants.swift in Sources */,
+				47F8A8FB203576E900016B4F /* SocketHandler.swift in Sources */,
 				4760E931200250600007AF16 /* BubbleModel.swift in Sources */,
 				47EF99B4200E149000886FFE /* ScheduleRideViewController.swift in Sources */,
 			);

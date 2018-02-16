@@ -18,15 +18,17 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             GMSMapViewDelegate, ScheduleRideViewControllerDelegate, NotificationDelegate, SBDChannelDelegate, UITableViewDelegate, UITableViewDataSource {
     
     @IBAction func hamburgerClicked(_ sender: UIBarButtonItem) {
-        let frame = self.view.frame
-        if self.isHamburgerMenuVisible {
-            self.view.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-            self.myTableView.removeFromSuperview()
-        } else {
-            self.view.frame = CGRect(x: CGFloat(self.menuWidth), y: 0, width: frame.width, height: frame.height)
-            self.view.addSubview(self.myTableView)
-        }
-        self.isHamburgerMenuVisible = !self.isHamburgerMenuVisible
+//        let frame = self.view.frame
+//        if self.isHamburgerMenuVisible {
+//            self.view.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+//            self.myTableView.removeFromSuperview()
+//        } else {
+//            self.view.frame = CGRect(x: CGFloat(self.menuWidth), y: 0, width: frame.width, height: frame.height)
+//            self.view.addSubview(self.myTableView)
+//        }
+//        self.isHamburgerMenuVisible = !self.isHamburgerMenuVisible
+//        let sh = SocketHandler.shared()
+//        sh.connectSocket()
     }
     
     var lat = 37.80
@@ -56,6 +58,12 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     
     let menuWidth: Int = 200
     
+    deinit {
+        if self.polylines != nil && (self.polylines?.count)! > 0 {
+            self.polylines!.removeAll()
+        }
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,7 +168,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         
         // Subscribe to notifications
         NotificationHandler.shared().setDelegate(self)
-        
+        SocketHandler.shared().setDelegate(self)
     }
     
     /** Giri
@@ -449,12 +457,23 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                     print("ok clicked")
                 }))
                 self.present(alert, animated: true, completion: nil)
+            } else {
+                var sh = SocketHandler.shared()
+                sh.connectSocket()
+                model.tripStatus = .requested
             }
         })
     }
 
     // NotificationDelegate methods.
     func rideAccepted(data: JSON) {
+        // Make this trip the active trip
+        let tripId = data["TripID"].stringValue
+        let model = BubbleModel.shared()
+        if !model.rideAccepted(tripId: tripId, driverEmail: data["DriverEmailID"].stringValue) {
+            return
+        }
+        
         // Alert user
         let alert = UIAlertController(title: "Ride accepted", message: "Your ride has been accepted", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
@@ -467,47 +486,46 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         mHandler.enterChannel(channelUrl)
         
         // Add delegate to the channel
-        let tripId = data["TripID"].stringValue
         SBDMain.add(self as SBDChannelDelegate, identifier: tripId)
-        
-        // Make this trip the active trip
-        let model = BubbleModel.shared()
-        model.activeTrip = model.tripToBeScheduled
-        model.activeTrip?.id = tripId
-        model.activeTrip?.driverEmail = data["DriverEmailID"].stringValue
-        
-        model.tripToBeScheduled = nil
     }
     
     func rideStarted(data: JSON) -> Void {
         let model = BubbleModel.shared()
-        model.hasTripStarted = true
+        let tripId = data["TripID"].stringValue
+        _ = model.rideStarted(tripId: tripId)
     }
     
     func rideEnded(data: JSON) -> Void {
         // Remove current trip object.
         let model = BubbleModel.shared()
-        model.activeTrip = nil
-        model.hasTripStarted = false
+        let tripId = data["TripID"].stringValue
+        if !model.rideEnded(tripId: tripId) {
+            return
+        }
         
         // Enable Instant ride button.
         self.instantRideButton?.isEnabled = true
+        
+        // Close socket
+        let sh = SocketHandler.shared()
+        sh.closeSocket()
     }
     
     func unableToFindDriver(data: JSON) -> Void {
         let model = BubbleModel.shared()
         let tripId = data["TripID"].stringValue
-        if (model.tripToBeScheduled?.id == tripId) {
-            model.tripToBeScheduled = nil
+        if model.unableToFindDriver(tripId: tripId) {
             self.instantRideButton?.isEnabled = true
         }
     }
     
     func locationReachedAndTimedout(data: JSON) -> Void {
         // Remove current trip object.
+        let tripId = data["TripID"].stringValue
         let model = BubbleModel.shared()
-        model.activeTrip = nil
-        model.hasTripStarted = false
+        if !model.locationReachedAndTimedout(tripId: tripId) {
+            return
+        }
         
         // Enable Instant ride button.
         self.instantRideButton?.isEnabled = true
@@ -571,4 +589,3 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         return 50.0;
     }
 }
-

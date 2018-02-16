@@ -15,6 +15,7 @@ pod 'SwiftyJSON', '3.1.4'
 pod 'Auth0'
 pod 'OneSignal', '>= 2.5.2', '< 3.0'
 pod 'SendBirdSDK'
+pod 'Starscream', '~> 3.0.2'
 end
 
 target 'OneSignalNotificationServiceExtension' do

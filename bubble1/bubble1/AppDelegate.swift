@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let notificationReceivedBlock: OSHandleNotificationReceivedBlock = { notification in
             
             print("Received Notification: \(notification!.payload.notificationID)")
-            NotificationHandler.shared().handle(notification!)
+            //NotificationHandler.shared().handle(notification!)
         }
         
         let notificationOpenedBlock: OSHandleNotificationActionBlock = { result in
