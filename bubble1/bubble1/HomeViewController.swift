@@ -200,6 +200,17 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                         if model.tripStatus != tStatus {
                             // There is a change in the status. Update model.
                             model.updateModel(tripObject: tripObj)
+                            // Check if the ride has ended
+                            if tStatus == .none {
+                                self.exitConnections()
+                                return
+                            }
+                            // Get the SB channel url and connect.
+                            let sbChannel = tripObj["SBChannelURL"].stringValue
+                            print("SB channel from API: " + sbChannel)
+                            if sbChannel != "" {
+                                MessagingHandler.shared().enterChannel(sbChannel, identifier: (model.getCurrentTrip()?.id)!, delegate: self)
+                            }
                         }
  
                         if model.tripStatus != .none {
@@ -546,10 +557,10 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         // Get channel url and enter the channel.
         let mHandler = MessagingHandler.shared()
         let channelUrl = data["Channel"].stringValue
-        mHandler.enterChannel(channelUrl)
+        mHandler.enterChannel(channelUrl, identifier: tripId, delegate: self)
         
         // Add delegate to the channel
-        SBDMain.add(self as SBDChannelDelegate, identifier: tripId)
+//        SBDMain.add(self as SBDChannelDelegate, identifier: tripId)
     }
     
     func rideStarted(data: JSON) -> Void {
@@ -569,12 +580,20 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         // Enable Instant ride button.
         self.instantRideButton?.isEnabled = true
         
+        exitConnections()
+        
+        // Update Map.
+        self.updateMapOnEndride()
+    }
+    
+    func exitConnections() {
         // Close socket
         let sh = SocketHandler.shared()
         sh.closeSocket()
         
-        // Update Map.
-        self.updateMapOnEndride()
+        // Close Messaging handler as well.
+        let mh = MessagingHandler.shared()
+        mh.exitChannel()
     }
     
     func unableToFindDriver(data: JSON) -> Void {

@@ -24,7 +24,7 @@ class MessagingHandler {
     
     var currentChannel: SBDOpenChannel?
     
-    public func enterChannel(_ channelUrl: String) {
+    public func enterChannel(_ channelUrl: String, identifier: String, delegate: SBDChannelDelegate) {
         SBDOpenChannel.getWithUrl(channelUrl) { (channel, error) in
             if error != nil {
                 print("Error: %@", error!)
@@ -39,6 +39,7 @@ class MessagingHandler {
                 self.currentChannel = channel
             })
         }
+        SBDMain.add(delegate, identifier: identifier)
     }
     
     public func exitChannel() {
