@@ -23,7 +23,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Home" id="vFM-GA-SfZ">
-                        <barButtonItem key="leftBarButtonItem" title="Menu" image="hamburger" id="yQ5-bm-WiZ">
+                        <barButtonItem key="leftBarButtonItem" enabled="NO" title="Menu" image="hamburger" id="yQ5-bm-WiZ">
                             <color key="tintColor" red="0.94511421319796951" green="0.90757442313060288" blue="0.1973981692823033" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="hamburgerClicked:" destination="gct-86-25F" id="EFS-FY-wYM"/>

@@ -41,8 +41,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     var toTextField: UITextField?
     var fromTextField : UITextField?
     
-    var fromPlace: GMSPlace?
-    var toPlace: GMSPlace?
+    var fromPlace: BubblePlace?
+    var toPlace: BubblePlace?
+    
+//    var bubblePlaceFrom: BubblePlace?
+//    var bubblePlaceTo: BubblePlace?
     
     var markerFrom: GMSMarker?
     var markerTo: GMSMarker?
@@ -87,6 +90,13 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         myTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         myTableView.dataSource = self
         myTableView.delegate = self
+        
+        // Subscribe to notifications
+        NotificationHandler.shared().setDelegate(self)
+        SocketHandler.shared().setDelegate(self)
+        
+        NotificationCenter.default.addObserver(self, selector:"eneteringForeground", name:
+            NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     /** Giri.
@@ -162,13 +172,57 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             
             self.view.addSubview(fromTextField!)
             self.view.addSubview(toTextField!)
-        } else {
-            self.showPlacesOnMap()
         }
-        
-        // Subscribe to notifications
-        NotificationHandler.shared().setDelegate(self)
-        SocketHandler.shared().setDelegate(self)
+        if let trip = BubbleModel.shared().getCurrentTrip() {
+            self.fromPlace = trip.source
+            self.toPlace = trip.destination
+        }
+        self.showPlacesOnMap()
+    }
+    
+    func eneteringForeground() {
+        let model = BubbleModel.shared()
+        // Get trip status for current trip.
+        if let trip = model.getCurrentTrip() {
+            WebUtil.getTripDetails(tripId: trip.id, callback: { response, error in
+                print(response)
+                if error != "" {
+                    print("Error in getTripDetails for id: " + trip.id)
+                    print(error)
+                    return
+                }
+                let tripObj = response["data"]
+                if tripObj != JSON.null {
+                    let tripStatusStr = tripObj["SessionState"].stringValue
+                    if tripStatusStr != "" {
+                        // Check trip status
+                        let tStatus = model.getTripStatusforString(tripStatusStr)
+                        if model.tripStatus != tStatus {
+                            // There is a change in the status. Update model.
+                            model.updateModel(tripObject: tripObj)
+                        }
+ 
+                        if model.tripStatus != .none {
+                            // reconnect to socket.
+                            let sh = SocketHandler.shared()
+                            sh.connectSocket()
+                        }
+                    }
+                }
+            })
+        }
+    }
+    
+    func putMarkerOnMap(place: BubblePlace, marker: GMSMarker, title: String, markerColor: UIColor = UIColor.red) {
+        marker.position = CLLocationCoordinate2D(latitude: (place.latitude), longitude: (place.longitude))
+        marker.title = title
+        marker.snippet = place.name
+        marker.icon = GMSMarker.markerImage(with: markerColor)
+        marker.map = self.view as? GMSMapView
+    }
+    
+    func getBubblePlaceFromGMSPlace(_ place: GMSPlace) -> BubblePlace {
+        return BubblePlace(place.name, latitude: place.coordinate.latitude, longitude: place.coordinate.longitude, placeId: place.placeID)
     }
     
     /** Giri
@@ -181,11 +235,12 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             if(self.markerFrom == nil) {
                 self.markerFrom = GMSMarker()
             }
-            self.markerFrom?.position = CLLocationCoordinate2D(latitude: (self.fromPlace!.coordinate.latitude), longitude: (self.fromPlace!.coordinate.longitude))
-            self.markerFrom?.title = "From"
-            self.markerFrom?.snippet = self.fromPlace?.name
-            self.markerFrom?.icon = GMSMarker.markerImage(with: UIColor(red:0, green: 255, blue: 0, alpha: 1))
-            self.markerFrom?.map = self.view as? GMSMapView
+            putMarkerOnMap(place: self.fromPlace!, marker: markerFrom!, title: "From", markerColor: UIColor(red:0, green: 255, blue: 0, alpha: 1))
+//            self.markerFrom?.position = CLLocationCoordinate2D(latitude: (self.fromPlace!.coordinate.latitude), longitude: (self.fromPlace!.coordinate.longitude))
+//            self.markerFrom?.title = "From"
+//            self.markerFrom?.snippet = self.fromPlace?.name
+//            self.markerFrom?.icon = GMSMarker.markerImage(with: UIColor(red:0, green: 255, blue: 0, alpha: 1))
+//            self.markerFrom?.map = self.view as? GMSMapView
         }
         if(self.toPlace != nil) {
             self.toTextField?.text = self.toPlace?.name
@@ -194,10 +249,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             if(self.markerTo == nil) {
                 self.markerTo = GMSMarker()
             }
-            self.markerTo?.position = CLLocationCoordinate2D(latitude: (self.toPlace!.coordinate.latitude), longitude: (self.toPlace!.coordinate.longitude))
-            self.markerTo?.title = "To"
-            self.markerTo?.snippet = self.toPlace?.name
-            self.markerTo?.map = self.view as? GMSMapView
+            putMarkerOnMap(place: self.toPlace!, marker: markerTo!, title: "To")
+//            self.markerTo?.position = CLLocationCoordinate2D(latitude: (self.toPlace!.coordinate.latitude), longitude: (self.toPlace!.coordinate.longitude))
+//            self.markerTo?.title = "To"
+//            self.markerTo?.snippet = self.toPlace?.name
+//            self.markerTo?.map = self.view as? GMSMapView
         }
         
         if(self.fromPlace != nil && self.toPlace != nil) {
@@ -238,13 +294,6 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         NSLog("bottom layout guide length: %@", self.bottomLayoutGuide.length)
         
         view = mapView
-        
-        // Creates a marker in the center of the map.
-//        let marker = GMSMarker()
-//        marker.position = CLLocationCoordinate2D(latitude: self.lat, longitude: self.long)
-//        marker.title = "Sydney"
-//        marker.snippet = "Australia"
-//        marker.map = mapView
     }
     
     /** Giri.
@@ -330,9 +379,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         print("Place address: \(String(describing: place.formattedAddress))")
         print("Place attributions: \(String(describing: place.attributions))")
         if(self.isPlaceFrom == true) {
-            self.fromPlace = place
+            self.fromPlace = getBubblePlaceFromGMSPlace(place)
         } else {
-            self.toPlace = place
+            self.toPlace = getBubblePlaceFromGMSPlace(place)
         }
         dismiss(animated: true, completion: nil)
         
@@ -355,11 +404,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     /** Giri
      Get the path, given a source and destination. Each line (polyline) is put on the map.
      */
-    func fetchPath(source: GMSPlace, destination: GMSPlace) {
-        let originLat = source.coordinate.latitude
-        let originLong = source.coordinate.longitude
-        let destLat = destination.coordinate.latitude
-        let destLong = destination.coordinate.longitude
+    func fetchPath(source: BubblePlace, destination: BubblePlace) {
+        let originLat = source.latitude
+        let originLong = source.longitude
+        let destLat = destination.latitude
+        let destLong = destination.longitude
         
         let origin = "\(originLat),\(originLong)"
         let destination = "\(destLat),\(destLong)"
@@ -458,11 +507,25 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                 }))
                 self.present(alert, animated: true, completion: nil)
             } else {
-                var sh = SocketHandler.shared()
+                let sh = SocketHandler.shared()
                 sh.connectSocket()
                 model.tripStatus = .requested
+                // Get trip Id as well.
+                let tripIdObj = response["data"]["TripID"]
+                if tripIdObj != JSON.null {
+                    let tripId = tripIdObj.stringValue
+                    model.getCurrentTrip()?.id = tripId
+                }
             }
         })
+    }
+    
+    private func updateMapOnEndride() {
+        // Remove driver marker
+        if self.driverMarker != nil {
+            driverMarker?.map = nil
+            driverMarker = nil
+        }
     }
 
     // NotificationDelegate methods.
@@ -509,6 +572,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         // Close socket
         let sh = SocketHandler.shared()
         sh.closeSocket()
+        
+        // Update Map.
+        self.updateMapOnEndride()
     }
     
     func unableToFindDriver(data: JSON) -> Void {

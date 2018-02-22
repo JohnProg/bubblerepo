@@ -59,6 +59,7 @@ class NotificationHandler {
     }
 }
 
+// This protocol (delgate) is used by the NotificationHandler and the SocketHandler and
 protocol NotificationDelegate {
     func rideAccepted(data: JSON) -> Void
     func rideStarted(data: JSON) -> Void

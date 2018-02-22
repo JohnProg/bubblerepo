@@ -30,7 +30,7 @@ class WebUtil {
     }
     
     // Not integrated.
-    public static func requestRide(userId: String, startLocation: GMSPlace, endLocation: GMSPlace, date: Date, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
+    public static func requestRide(userId: String, startLocation: BubblePlace, endLocation: BubblePlace, date: Date, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
         let srcName = startLocation.name
         let destName = endLocation.name
         let srcPlaceId = startLocation.placeID
@@ -43,10 +43,10 @@ class WebUtil {
         let month = calendar.component(.month, from: date)
         let day = calendar.component(.day, from: date)
         
-        let startLat = startLocation.coordinate.latitude
-        let startLng = startLocation.coordinate.longitude
-        let destLat = endLocation.coordinate.latitude
-        let destLng = endLocation.coordinate.longitude
+        let startLat = startLocation.latitude
+        let startLng = startLocation.longitude
+        let destLat = endLocation.latitude
+        let destLng = endLocation.longitude
         
         let url = Constants.API_Server.Base + "/requestTrip?" +
             "StartLocation=" + srcName + "&DropLocation=" + destName +
@@ -74,6 +74,56 @@ class WebUtil {
                 callback(JSON(""), (err?.localizedDescription)!)
             }
             
+        }
+    }
+    
+    public static func getTripStatus(tripId: String, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
+        let url = Constants.API_Server.Base + "/getTripStatus?TripID=" + tripId
+        let escapedUrl = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        print(escapedUrl!)
+        Alamofire.request(escapedUrl!, method: .get).responseJSON { response in
+            if(response.result.isSuccess) {
+                print(response.request!)  // original URL request
+                print(response.response!) // HTTP URL response
+                print(response.data!)     // server data
+                print(response.result)   // result of response serialization
+                
+                if( (response.response?.statusCode)! >= 200 && (response.response?.statusCode)! < 300) {
+                    let json = JSON(data: response.data!)
+                    callback(json, "")
+                } else {
+                    callback(JSON(""), "Some error")
+                }
+                
+            } else {
+                let err = response.result.error
+                callback(JSON(""), (err?.localizedDescription)!)
+            }
+        }
+    }
+    
+    public static func getTripDetails(tripId: String, callback: @escaping (_ response:JSON, _ error:String ) -> Void) {
+        let url = Constants.API_Server.Base + "/getTripDetails?TripID=" + tripId
+        let escapedUrl = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        print(escapedUrl!)
+        Alamofire.request(escapedUrl!, method: .get).responseJSON { response in
+            if(response.result.isSuccess) {
+                print(response.request!)  // original URL request
+                print(response.response!) // HTTP URL response
+                print(response.data!)     // server data
+                print(response.result)   // result of response serialization
+                
+                if( (response.response?.statusCode)! >= 200 && (response.response?.statusCode)! < 300) {
+                    let json = JSON(data: response.data!)
+                    callback(json, "")
+                } else {
+                    callback(JSON(""), "Some error")
+                }
+                
+            } else {
+                let err = response.result.error
+                callback(JSON(""), (err?.localizedDescription)!)
+            }
         }
     }
 }

@@ -31,15 +31,20 @@ class SocketHandler: WebSocketDelegate {
     }
     
     public func connectSocket() {
+        if let isConnected = self.socket?.isConnected {
+            if isConnected {
+                return
+            }
+        }
         let model = BubbleModel.shared()
         let ws_protocol = self.removeSpecialCharsFromString(text: model.userId)
-        socket = WebSocket(url: URL(string: "ws://ec2-35-153-75-38.compute-1.amazonaws.com:80")!, protocols: [ws_protocol])
+        socket = WebSocket(url: URL(string: Constants.API_Server.WS_Base)!, protocols: [ws_protocol])
         socket?.delegate = self
         socket?.connect()
     }
     
     public func closeSocket() {
-        
+        self.socket?.disconnect()
     }
     
     public func handleMessage(data: JSON) {
