@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(UserDefaults.standard.bool(forKey: "IsUserLoggedIn"))
         
         // Override point for customization after application launch.
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        //FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         
         GMSServices.provideAPIKey(Constants.Keys.GoogleMaps_APIKey)
         GMSPlacesClient.provideAPIKey(Constants.Keys.GoogleMaps_APIKey)
@@ -71,9 +71,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         OneSignal.inFocusDisplayType = OSNotificationDisplayType.notification;
         
-        if UserDefaults.standard.bool(forKey: "IsUserLoggedIn") {
+        if UserDefaults.standard.bool(forKey: Constants.Stored_Values.Keys.Is_User_Logged_In) {
             // Set userId in the model, initialize OneSignal with the userId and navigate to the home screen.
-            let userId = UserDefaults.standard.string(forKey: "userID")!
+            let userId = UserDefaults.standard.string(forKey: Constants.Stored_Values.Keys.User_ID)!
             BubbleModel.shared().userId = userId
             NotificationHandler.shared().initializeOneSignalWithUserID(userId)
             switchToHomeScreen()
@@ -114,6 +114,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let sb = UIStoryboard(name: "Home", bundle: nil)
         let vc = sb.instantiateViewController(withIdentifier: "MainNavVC")
+        self.window?.rootViewController = vc
+    }
+    
+    func presentLoginScreen() {
+        let sb = UIStoryboard(name: "Splash", bundle: nil)
+        let vc = sb.instantiateViewController(withIdentifier: "BubbleLoginScreen")
         self.window?.rootViewController = vc
     }
 

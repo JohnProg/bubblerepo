@@ -51,11 +51,16 @@ class NotificationHandler {
             print("User accepted notifications: \(accepted)")
             OneSignal.sendTag("UserType", value: "User")
             OneSignal.sendTag("email", value: userId)
+            OneSignal.setSubscription(true) // Unset this on logout
         })
         
         // Sync hashed email if you have a login system or collect it.
         //   Will be used to reach the user at the most optimal time of day.
         // OneSignal.syncHashedEmail(userEmail)
+    }
+    
+    public func unsetSubscription() {
+        OneSignal.setSubscription(false)
     }
 }
 

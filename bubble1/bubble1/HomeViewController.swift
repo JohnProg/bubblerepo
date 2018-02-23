@@ -17,6 +17,19 @@ import SendBirdSDK
 class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteViewControllerDelegate,
             GMSMapViewDelegate, ScheduleRideViewControllerDelegate, NotificationDelegate, SBDChannelDelegate, UITableViewDelegate, UITableViewDataSource {
     
+    @IBAction func logoutClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            print("Logging out..")
+            self.logout()
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { _ in
+            print("Cancelled")
+            
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     @IBAction func hamburgerClicked(_ sender: UIBarButtonItem) {
 //        let frame = self.view.frame
 //        if self.isHamburgerMenuVisible {
@@ -65,7 +78,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         if self.polylines != nil && (self.polylines?.count)! > 0 {
             self.polylines!.removeAll()
         }
-        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        // Remove observers
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     override func viewDidLoad() {
@@ -224,6 +241,21 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         }
     }
     
+    private func logout() {
+        // Close all connections
+        SocketHandler.shared().closeSocket()
+        MessagingHandler.shared().exitChannel()
+        NotificationHandler.shared().unsetSubscription()
+        
+        // Remove keys from UserDefaults
+        UserDefaults.standard.removeObject(forKey: Constants.Stored_Values.Keys.Is_User_Logged_In)
+        UserDefaults.standard.removeObject(forKey: Constants.Stored_Values.Keys.User_ID)
+        
+        // Remove markers
+        
+        (UIApplication.shared.delegate as! AppDelegate).presentLoginScreen()
+    }
+    
     func putMarkerOnMap(place: BubblePlace, marker: GMSMarker, title: String, markerColor: UIColor = UIColor.red) {
         marker.position = CLLocationCoordinate2D(latitude: (place.latitude), longitude: (place.longitude))
         marker.title = title
@@ -247,11 +279,6 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                 self.markerFrom = GMSMarker()
             }
             putMarkerOnMap(place: self.fromPlace!, marker: markerFrom!, title: "From", markerColor: UIColor(red:0, green: 255, blue: 0, alpha: 1))
-//            self.markerFrom?.position = CLLocationCoordinate2D(latitude: (self.fromPlace!.coordinate.latitude), longitude: (self.fromPlace!.coordinate.longitude))
-//            self.markerFrom?.title = "From"
-//            self.markerFrom?.snippet = self.fromPlace?.name
-//            self.markerFrom?.icon = GMSMarker.markerImage(with: UIColor(red:0, green: 255, blue: 0, alpha: 1))
-//            self.markerFrom?.map = self.view as? GMSMapView
         }
         if(self.toPlace != nil) {
             self.toTextField?.text = self.toPlace?.name
@@ -261,10 +288,6 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                 self.markerTo = GMSMarker()
             }
             putMarkerOnMap(place: self.toPlace!, marker: markerTo!, title: "To")
-//            self.markerTo?.position = CLLocationCoordinate2D(latitude: (self.toPlace!.coordinate.latitude), longitude: (self.toPlace!.coordinate.longitude))
-//            self.markerTo?.title = "To"
-//            self.markerTo?.snippet = self.toPlace?.name
-//            self.markerTo?.map = self.view as? GMSMapView
         }
         
         if(self.fromPlace != nil && self.toPlace != nil) {
@@ -277,11 +300,8 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
 //            let camera = map.camera(for: bounds, insets: edgeInsets)!
 //            map.camera = camera
             
-            let cameraUpdate = GMSCameraUpdate.fit(bounds, withPadding: 50.0)
+            let cameraUpdate = GMSCameraUpdate.fit(bounds, withPadding: 100.0)
             map.animate(with: cameraUpdate)
-            
-//            let cameraUpdate = GMSCameraUpdate.fit(bounds)
-//            map?.animate(with: cameraUpdate)
         }
     }
     
@@ -527,6 +547,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                     let tripId = tripIdObj.stringValue
                     model.getCurrentTrip()?.id = tripId
                 }
+                self.showToast(message: "Looking for drivers")
             }
         })
     }
@@ -566,7 +587,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     func rideStarted(data: JSON) -> Void {
         let model = BubbleModel.shared()
         let tripId = data["TripID"].stringValue
-        _ = model.rideStarted(tripId: tripId)
+        if model.rideStarted(tripId: tripId) {
+            self.showToast(message: "Bubble ride started. Your child is safe with us.")
+        }
     }
     
     func rideEnded(data: JSON) -> Void {
@@ -581,6 +604,8 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         self.instantRideButton?.isEnabled = true
         
         exitConnections()
+        
+        self.showToast(message: "Bubble ride completed. Thank you for choosing Bubble!")
         
         // Update Map.
         self.updateMapOnEndride()
@@ -672,5 +697,24 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 50.0;
+    }
+    
+    func showToast(message : String) {
+        
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        toastLabel.textColor = UIColor.white
+        toastLabel.textAlignment = .center;
+        toastLabel.font = UIFont(name: "Helvetica Neue", size: 14.0)
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10;
+        toastLabel.clipsToBounds  =  true
+        self.view.addSubview(toastLabel)
+        UIView.animate(withDuration: 8.0, delay: 0.1, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
     }
 }

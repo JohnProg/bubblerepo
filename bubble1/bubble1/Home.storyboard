@@ -23,10 +23,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Home" id="vFM-GA-SfZ">
-                        <barButtonItem key="leftBarButtonItem" enabled="NO" title="Menu" image="hamburger" id="yQ5-bm-WiZ">
-                            <color key="tintColor" red="0.94511421319796951" green="0.90757442313060288" blue="0.1973981692823033" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <barButtonItem key="rightBarButtonItem" image="icons8-exit-50" id="b4Y-8p-NFb" userLabel="logout">
+                            <color key="tintColor" red="0.96345825165042331" green="1" blue="0.95202436437637583" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
-                                <action selector="hamburgerClicked:" destination="gct-86-25F" id="EFS-FY-wYM"/>
+                                <action selector="logoutClicked:" destination="gct-86-25F" id="mIv-nm-RLt"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -63,6 +63,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="hamburger" width="50" height="50"/>
+        <image name="icons8-exit-50" width="50" height="50"/>
     </resources>
 </document>

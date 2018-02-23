@@ -20,6 +20,8 @@ struct Constants {
     }
     struct Stored_Values {
         struct Keys {
+            static let Is_User_Logged_In = "IsUserLoggedIn"
+            static let User_ID = "userID"
             static let Bubble_Place_Name = "bubblePlaceName"
             static let Bubble_Place_Lat = "bubblePlaceLat"
             static let Bubble_Place_Lng = "bubblePlaceLng"
