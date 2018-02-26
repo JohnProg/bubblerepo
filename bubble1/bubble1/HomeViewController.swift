@@ -397,7 +397,13 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             print("to")
             self.isPlaceFrom = false
         }
+        UINavigationBar.appearance().barTintColor = Constants.UIElements.SEARCH_BAR_TINT_COLOR
         let autocompleteController = GMSAutocompleteViewController()
+//        let searchField = UISearchBar.value(forKey: "searchField") as? UITextField
+//        searchField?.textColor = UIColor.white
+        //UISearchBar.appearance().tintColor = UIColor.white
+        //UISearchBar.appearance().backgroundColor = UIColor.white
+//        UISearchBar.appearance().barStyle = UIBarStyle.default
         autocompleteController.delegate = self
         present(autocompleteController, animated: true, completion: nil)
     }
@@ -406,6 +412,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
      This method handles the user's selection.
      */
     func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        UINavigationBar.appearance().barTintColor = Constants.UIElements.BAR_TINT_COLOR
         print("Place name: \(place.name)")
         print("Place address: \(String(describing: place.formattedAddress))")
         print("Place attributions: \(String(describing: place.attributions))")
@@ -497,6 +504,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     // User canceled the operation.
     func wasCancelled(_ viewController: GMSAutocompleteViewController) {
         dismiss(animated: true, completion: nil)
+        UINavigationBar.appearance().barTintColor = Constants.UIElements.BAR_TINT_COLOR
     }
     
     // Turn the network activity indicator on and off again.

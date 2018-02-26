@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Constants {
     struct Keys {
@@ -44,5 +45,10 @@ struct Constants {
             static let Trip_Cancelled = "TRIP_CANCELED"
             static let Request_For_Cancellation = "REQUEST_FOR_CANCELLATION"
         }
+    }
+    
+    struct UIElements {
+        static let BAR_TINT_COLOR = UIColor.black
+        static let SEARCH_BAR_TINT_COLOR = UIColor.lightGray
     }
 }
