@@ -111,9 +111,6 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         // Subscribe to notifications
         NotificationHandler.shared().setDelegate(self)
         SocketHandler.shared().setDelegate(self)
-        
-        NotificationCenter.default.addObserver(self, selector:"eneteringForeground", name:
-            NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     /** Giri.
@@ -195,9 +192,11 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
             self.toPlace = trip.destination
         }
         self.showPlacesOnMap()
+        NotificationCenter.default.addObserver(self, selector:#selector(HomeViewController.enteringForeground), name:
+            NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
-    func eneteringForeground() {
+    func enteringForeground() {
         let model = BubbleModel.shared()
         // Get trip status for current trip.
         if let trip = model.getCurrentTrip() {
@@ -219,7 +218,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
                             model.updateModel(tripObject: tripObj)
                             // Check if the ride has ended
                             if tStatus == .none {
-                                self.exitConnections()
+                                self.resetEverything()
                                 return
                             }
                             // Get the SB channel url and connect.
@@ -560,6 +559,14 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         })
     }
     
+    private func resetEverything() {
+        // Enable Instant ride button.
+        self.instantRideButton?.isEnabled = true
+        exitConnections()
+        // Update Map.
+        self.updateMapOnEndride()
+    }
+    
     private func updateMapOnEndride() {
         // Remove driver marker
         if self.driverMarker != nil {
@@ -596,7 +603,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         let model = BubbleModel.shared()
         let tripId = data["TripID"].stringValue
         if model.rideStarted(tripId: tripId) {
-            self.showToast(message: "Bubble ride started. Your child is safe with us.")
+            self.showToast(message: "Bubble ride started")
         }
     }
     
@@ -613,7 +620,7 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         
         exitConnections()
         
-        self.showToast(message: "Bubble ride completed. Thank you for choosing Bubble!")
+        self.showToast(message: "Bubble ride completed")
         
         // Update Map.
         self.updateMapOnEndride()
@@ -634,6 +641,8 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         let tripId = data["TripID"].stringValue
         if model.unableToFindDriver(tripId: tripId) {
             self.instantRideButton?.isEnabled = true
+            self.exitConnections()
+            self.updateMapOnEndride()
         }
     }
     
@@ -647,6 +656,8 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
         
         // Enable Instant ride button.
         self.instantRideButton?.isEnabled = true
+        self.exitConnections()
+        self.updateMapOnEndride()
         
         // Alert user
         let alert = UIAlertController(title: "Timeout", message: "Driver reached location, but unable to start ride. The current ride is cancelled.", preferredStyle: .alert)
@@ -676,6 +687,9 @@ class HomeViewController: UIViewController,UITextFieldDelegate, GMSAutocompleteV
     
     func updateDriverLocation() {
         let model = BubbleModel.shared()
+        if model.activeTrip == nil {
+            return
+        }
         if(self.driverMarker == nil) {
             self.driverMarker = GMSMarker()
         }

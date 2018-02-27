@@ -16,8 +16,11 @@ struct Constants {
         static let SendBird_APPID = "A0F1C638-F85F-4F79-BEE9-6D335268D9D1"
     }
     struct API_Server {
-        static let Base = "http://ec2-35-153-75-38.compute-1.amazonaws.com:80"
-        static let WS_Base = "ws://ec2-35-153-75-38.compute-1.amazonaws.com:80"
+        static let Base = "http://www.baybubble.com"
+        static let WS_Base = "ws://34.216.193.121:3001"
+        
+        static let Staging_Base = "http://ec2-35-153-75-38.compute-1.amazonaws.com:80"
+        static let Staging_WS_Base = "ws://ec2-35-153-75-38.compute-1.amazonaws.com:80"
     }
     struct Stored_Values {
         struct Keys {

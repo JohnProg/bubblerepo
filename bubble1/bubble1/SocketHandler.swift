@@ -44,7 +44,11 @@ class SocketHandler: WebSocketDelegate {
     }
     
     public func closeSocket() {
-        self.socket?.disconnect()
+        if let isConnected = self.socket?.isConnected {
+            if isConnected {
+                self.socket?.disconnect()
+            }
+        }
     }
     
     public func handleMessage(data: JSON) {

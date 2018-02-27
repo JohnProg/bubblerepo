@@ -64,7 +64,7 @@ class BubbleModel {
     }
     
     public func unableToFindDriver(tripId: String) -> Bool {
-        if self.tripStatus != .requested {
+        if self.tripStatus != .requested || tripId != self.tripToBeScheduled?.id {
             print("Trip status is not requested. Ignoring request for trip Id: " + tripId)
             return false
         }
